@@ -14,6 +14,10 @@ class CommentRepository {
   async getCommentByThread(selectedThread) {
     throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
+
+  async checkCommentThreadRelation(thread, comment) {
+    throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+  }
 }
 
 module.exports = CommentRepository;

@@ -87,6 +87,13 @@ describe('ThreadRepositoryPostgres', () => {
   });
 
   describe('getThread function', () => {
+    it('should return detailed version of thread', async () => {
+      // Arrange
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
+
+      // Action & Assert
+      await expect(threadRepositoryPostgres.getThread('thread-123')).rejects.toThrowError(NotFoundError);
+    });
  
     it('should return detailed version of thread', async () => {
       // Arrange

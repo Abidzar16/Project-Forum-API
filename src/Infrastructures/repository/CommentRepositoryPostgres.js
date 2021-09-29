@@ -15,7 +15,24 @@ class CommentRepositoryPostgres extends CommentRepository {
 
   async verifyCommentOwnership(owner, comment) {
     const query = {
-      text: 'SELECT id FROM comments WHERE id = $1',
+      text: 'SELECT owner FROM comments WHERE id = $1',
+      values: [comment],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (result.rowCount == 0) {
+      throw new NotFoundError('comment tidak ditemukan');
+    }
+    
+    if (result.rows[0].owner != owner) {
+      throw new AuthenticationError('anda tidak memiliki comment ini');
+    }
+  }
+
+  async checkCommentThreadRelation(thread, comment) {
+    const query = {
+      text: 'SELECT * FROM comments WHERE id = $1',
       values: [comment],
     };
 
@@ -25,8 +42,8 @@ class CommentRepositoryPostgres extends CommentRepository {
       throw new NotFoundError('comment tidak ditemukan');
     }
 
-    if (result.rows[0].id == owner) {
-      throw new AuthenticationError('anda tidak memiliki comment ini');
+    if (result.rows[0].thread != thread) {
+      throw new NotFoundError('thread tidak ditemukan');
     }
   }
 

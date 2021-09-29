@@ -30,7 +30,7 @@ describe('DeleteCommentUseCase', () => {
       .toThrowError('DELETE_COMMENT_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
   });
 
-  it('should orchestrating the delete authentication action correctly', async () => {
+  it('should orchestrating the delete reply action correctly', async () => {
     // Arrange
     const useCasePayload = {
       thread: "thread-123",

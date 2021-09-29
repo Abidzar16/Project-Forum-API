@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const AddThreadUseCase = require('../../../../Applications/use_case/AddThreadUseCase');
 const GetThreadUseCase = require('../../../../Applications/use_case/GetThreadUseCase');
 const GetCommentUseCase = require('../../../../Applications/use_case/GetCommentUseCase');
