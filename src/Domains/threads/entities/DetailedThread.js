@@ -11,7 +11,9 @@ class DetailedThread {
     this.date = date;
   }
  
-  _verifyPayload({ id, title, body, date, owner }) {
+  _verifyPayload({
+    id, title, body, date, owner
+  }) {
     if (!id || !title || !body || !date || !owner) {
       throw new Error('DETAILED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
     }

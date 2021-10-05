@@ -11,11 +11,12 @@
     "test:watch": "jest --watchAll --coverage --setupFiles dotenv/config -i",
     "migrate": "node-pg-migrate",
     "migrate:test": "node-pg-migrate -f config/database/test.json",
-    "lint": "eslint src"
+    "lint": "npx eslint ./src"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "setupFiles": ["core-js"],
   "dependencies": {
     "@hapi/hapi": "^20.1.5",
     "@hapi/jwt": "^2.0.1",
@@ -23,11 +24,13 @@
     "dotenv": "^10.0.0",
     "eslint-plugin-markdown": "^2.2.1",
     "instances-container": "^2.0.3",
+    "lodash": "^4.17.21",
     "nanoid": "^3.1.23",
     "pg": "^8.6.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.24",
+    "core-js": "^3.18.1",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.24.2",

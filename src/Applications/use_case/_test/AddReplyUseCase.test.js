@@ -25,7 +25,6 @@ describe('AddReplyUseCase', () => {
       owner: useCasePayload.owner,
     });
     
-
     /** creating dependency of use case */
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();

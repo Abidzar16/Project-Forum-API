@@ -1,8 +1,6 @@
 /* eslint-disable no-param-reassign */
 const AddThreadUseCase = require('../../../../Applications/use_case/AddThreadUseCase');
-const GetThreadUseCase = require('../../../../Applications/use_case/GetThreadUseCase');
-const GetCommentUseCase = require('../../../../Applications/use_case/GetCommentUseCase');
-const GetUsernameUseCase = require('../../../../Applications/use_case/GetUsernameUseCase');
+const GetDetailedUseCase = require('../../../../Applications/use_case/GetDetailedUseCase');
 
 class ThreadsHandler {
   constructor(container) {
@@ -33,27 +31,11 @@ class ThreadsHandler {
 
   async getThreadHandler(request, h) {
     const { threadId } = request.params;
+    const payload = { 'thread': threadId };
     
-    const getThreadUseCase = this._container.getInstance(GetThreadUseCase.name);
-    const getCommentUseCase = this._container.getInstance(GetCommentUseCase.name);
-    const getUsernameUseCase = this._container.getInstance(GetUsernameUseCase.name);
-
-    const payload = {'thread': threadId,};
-
-    var detailedThread = await getThreadUseCase.execute(payload);
-    detailedThread['username'] = await getUsernameUseCase.execute({'id': detailedThread['owner']});
-    delete detailedThread['owner'];
-
-    var rawComments = await getCommentUseCase.execute(payload);
+    const getDetailedUseCase = this._container.getInstance(GetDetailedUseCase.name);
+    const detailedThread = await getDetailedUseCase.execute(payload);
     
-    const detailedComments = await Promise.all(rawComments.map(async (comment) => {
-      comment['username'] = await getUsernameUseCase.execute({'id': comment['owner']});
-      delete comment['owner'];
-      return comment;
-    }));
-
-    detailedThread['comments'] = detailedComments;
-
     const response = h.response({
       status: 'success',
       data: {

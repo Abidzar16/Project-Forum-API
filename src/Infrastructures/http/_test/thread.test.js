@@ -4,6 +4,7 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const AuthenticationsTableTestHelper = require('../../../../tests/AuthenticationsTableTestHelper');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
+const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper');
 
 const container = require('../../container');
 const createServer = require('../createServer');
@@ -24,9 +25,11 @@ describe('/threads endpoint', () => {
   });
 
   afterAll(async () => {
+    await RepliesTableTestHelper.cleanTable();
+    await CommentsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
-    await AuthenticationsTableTestHelper.cleanTable();
+    await AuthenticationsTableTestHelper.cleanTable();    
     await pool.end();
   });
 
@@ -165,25 +168,28 @@ describe('/threads endpoint', () => {
     });
   });
 
-  describe('when POST /threads/{threadId}', () => {
+  describe('when GET /threads/{threadId}', () => {
     it('should response 201 and persisted user', async () => {
       // Arrange
       const server = await createServer(container);
       await UsersTableTestHelper.addUser({ id: 'user-234', username: 'jamesdoe',});
       await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-234',});
       await CommentsTableTestHelper.addComment({ id: 'comment-123', owner: 'user-234',});
+      await RepliesTableTestHelper.addReply({ id: 'replies-123', owner: 'user-234',});
 
       // Action
       const response = await server.inject({
         method: 'GET',
         url: '/threads/thread-123',
       });
-      
+
       // Assert
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
       expect(responseJson.data.thread).toBeDefined();
+      expect(responseJson.data.thread.comments).toBeDefined();
+      expect(responseJson.data.thread.comments[0].replies).toBeDefined();
     });
   });
 });

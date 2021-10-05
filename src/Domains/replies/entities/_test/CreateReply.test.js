@@ -37,6 +37,6 @@ describe('a CreateReply entities', () => {
     expect(content).toEqual(payload.content);
     expect(comment).toEqual(payload.comment);
     expect(owner).toEqual(payload.owner);
-    expect(owner).toEqual(payload.thread);
+    expect(thread).toEqual(payload.thread);
   });
 });

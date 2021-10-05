@@ -1,4 +1,4 @@
-const DetailedComment = require('../DetailedReply');
+const DetailedReply = require('../DetailedReply');
  
 describe('a CreatedComment entities', () => {
   it('should throw error when payload did not contain needed property', () => {
@@ -8,7 +8,7 @@ describe('a CreatedComment entities', () => {
     };
  
     // Action and Assert
-    expect(() => new DetailedComment(payload)).toThrowError('DETAILED_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
+    expect(() => new DetailedReply(payload)).toThrowError('DETAILED_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
   });
 
   it('should throw error when payload did not meet data type specification', () => {
@@ -21,7 +21,7 @@ describe('a CreatedComment entities', () => {
       is_deleted: 0,
     };
     // Action and Assert
-    expect(() => new DetailedComment(payload)).toThrowError('DETAILED_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
+    expect(() => new DetailedReply(payload)).toThrowError('DETAILED_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION');
   });
 
   it('should create CreatedComment object correctly when is_deleted = false', () => {
@@ -34,7 +34,7 @@ describe('a CreatedComment entities', () => {
       is_deleted: false,
     };
     // Action
-    const { id, content, owner, date, is_deleted } = new DetailedComment(payload);
+    const { id, content, owner, date, is_deleted } = new DetailedReply(payload);
     // Assert
     expect(id).toEqual(payload.id);
     expect(content).toEqual(payload.content);
@@ -53,10 +53,10 @@ describe('a CreatedComment entities', () => {
       is_deleted: true,
     };
     // Action
-    const { id, content, owner, date, is_deleted } = new DetailedComment(payload);
+    const { id, content, owner, date, is_deleted } = new DetailedReply(payload);
     // Assert
     expect(id).toEqual(payload.id);
-    expect(content).toEqual("**komentar telah dihapus**");
+    expect(content).toEqual("**balasan telah dihapus**");
     expect(owner).toEqual(payload.owner);
     expect(date).toEqual(payload.date);
     expect(is_deleted).toEqual(payload.is_deleted);

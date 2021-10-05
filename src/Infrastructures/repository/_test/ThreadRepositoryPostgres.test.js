@@ -1,16 +1,16 @@
+// const {describe, beforeAll, afterEach, afterAll, it} = require('jest');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 
 const CreateThread = require('../../../Domains/threads/entities/CreateThread');
 const CreatedThread = require('../../../Domains/threads/entities/CreatedThread');
-const DetailedThread = require('../../../Domains/threads/entities/DetailedThread');
 
 const pool = require('../../database/postgres/pool');
 
 const ThreadRepositoryPostgres = require('../ThreadRepositoryPostgres');
 
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
- 
+
 describe('ThreadRepositoryPostgres', () => {
   beforeAll(async () => {
     await UsersTableTestHelper.addUser({id: 'user-234', username: 'dicoding2' });

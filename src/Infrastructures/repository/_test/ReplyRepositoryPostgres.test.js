@@ -11,7 +11,7 @@ const pool = require('../../database/postgres/pool');
 const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
-const AuthenticationError = require('../../../Commons/exceptions/AuthenticationError');
+const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
  
 describe('ReplyRepositoryPostgres', () => {
   beforeAll(async () => {
@@ -32,34 +32,36 @@ describe('ReplyRepositoryPostgres', () => {
     await pool.end();
   });
 
-  // describe('verifyCommentOwnership function', () => {
-  //   it('should throw NotFoundError when thread not found', async () => {
-  //     const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+  describe('verifyReplyOwnership function', () => {
+    it('should throw NotFoundError when thread not found', async () => {
+      const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
       
-  //     // Action & Assert
-  //     await expect(commentRepositoryPostgres.verifyCommentOwnership('user-234','comment-567')).rejects.toThrowError(NotFoundError);
-  //   });
+      // Action & Assert
+      await expect(commentRepositoryPostgres.verifyReplyOwnership('user-234','reply-123')).rejects.toThrowError(NotFoundError);
+    });
 
-  //   it('should throw NotFoundError when thread found', async () => {
-  //     // Arrange
-  //     await CommentsTableTestHelper.addComment({id: 'comment-abc', thread: 'thread-123', owner: 'user-234' });
-  //     const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+    it('should throw AuthorizationError when reply found but not owned', async () => {
+      // Arrange
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-123', content: 'dicoding', comment: 'comment-345', owner: 'user-123', is_deleted: false,
+      });
+      const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
  
-  //     // Action & Assert
-  //     await expect(commentRepositoryPostgres.verifyCommentOwnership('user-123','comment-abc')).resolves.not.toThrowError(AuthenticationError);
-  //   });
+      // Action & Assert
+      await expect(commentRepositoryPostgres.verifyReplyOwnership('user-234','reply-123')).rejects.toThrowError(AuthorizationError);
+    });
  
-  //   it('should not throw NotFoundError when thread found', async () => {
-  //     // Arrange
-  //     await CommentsTableTestHelper.addComment({id: 'comment-345', thread: 'thread-123', owner: 'user-234' });
-  //     const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+    it('should not throw AuthenticationError when reply is found and owned', async () => {
+      // Arrange
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-123', content: 'dicoding', comment: 'comment-345', owner: 'user-123', is_deleted: false,
+      });
+      const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
  
-  //     // Action & Assert
-  //     await expect(commentRepositoryPostgres.verifyCommentOwnership('user-234','comment-345')).resolves.not.toThrowError(NotFoundError);
-  //   });
-  // });
-
-  
+      // Action & Assert
+      await expect(commentRepositoryPostgres.verifyReplyOwnership('user-123','reply-123')).resolves.not.toThrowError(AuthorizationError);
+    });
+  });
  
   describe('addReply function', () => {
     it('should persist create thread', async () => {
@@ -104,36 +106,38 @@ describe('ReplyRepositoryPostgres', () => {
     });
   });
 
-  // describe('deleteComment function', () => {
-  //   it('should delete comment from database', async () => {
-  //     // Arrange
-  //     await CommentsTableTestHelper.addComment({id: 'comment-780', owner: 'user-123'});
+  describe('deleteComment function', () => {
+    it('should delete comment from database', async () => {
+      // Arrange
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-123', content: 'dicoding', comment: 'comment-345', owner: 'user-123', is_deleted: false,
+      });
       
-  //     const fakeIdGenerator = () => '780'; // stub!
-  //     const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, fakeIdGenerator);
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
  
-  //     // Action
-  //     await commentRepositoryPostgres.deleteComment('comment-780');
+      // Action
+      await replyRepositoryPostgres.deleteReply('reply-123');
  
-  //     // Assert
-  //     const comments = await CommentsTableTestHelper.findCommentById('comment-780');
-  //     expect(comments).toHaveLength(0);
-  //   });
-  // });
+      // Assert
+      const replies = await RepliesTableTestHelper.findReplyById('reply-123');
+      expect(replies).toHaveLength(0);
+    });
+  });
 
-  // describe('getCommentByThread function', () => {
-  //   it('should get comment from database by thread od', async () => {
-  //     // Arrange
-  //     await CommentsTableTestHelper.addComment({id: 'comment-780', owner: 'user-123', thread: 'thread-123'});
-  //     await CommentsTableTestHelper.addComment({id: 'comment-781', owner: 'user-234', thread: 'thread-123'});
-  //     const fakeIdGenerator = () => '780'; // stub!
-  //     const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, fakeIdGenerator);
+  describe('getReplyByComment function', () => {
+    it('should get comment from database by thread od', async () => {
+      // Arrange
+      await RepliesTableTestHelper.addReply({
+        id: 'reply-123', content: 'dicoding', comment: 'comment-345', owner: 'user-123', is_deleted: false,
+      });
+      const fakeIdGenerator = () => '780'; // stub!
+      const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, fakeIdGenerator);
       
-  //     // Action
-  //     const detailedComments = await commentRepositoryPostgres.getCommentByThread('thread-123');
+      // Action
+      const detailedComments = await commentRepositoryPostgres.getReplyByComment('comment-345');
  
-  //     // Assert
-  //     expect(detailedComments).toHaveLength(2);
-  //   });
-  // });
+      // Assert
+      expect(detailedComments).toHaveLength(1);
+    });
+  });
 });

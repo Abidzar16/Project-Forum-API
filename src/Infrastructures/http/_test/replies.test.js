@@ -22,17 +22,18 @@ describe('/threads/{threadId}/comments endpoint', () => {
         fullname: 'Dicoding Indonesia',
       },
     });
-    const response_user_json = JSON.parse(response_user.payload);
-    const owner = response_user_json.data.addedUser.id;
+    
+    const response_user_json = await JSON.parse(response_user.payload);
+    const owner = await response_user_json.data.addedUser.id;
 
     await ThreadsTableTestHelper.addThread({
-      id : 'thread-234', title : 'dicoding', body : 'secret', owner : owner,
+      id : 'thread-234', title : 'dicoding', body : 'secret', owner,
     });
     await CommentsTableTestHelper.addComment({
-      id : 'comment-123', content : 'dicoding', thread : 'thread-234', owner : owner, is_deleted : false,
+      id : 'comment-123', content : 'dicoding', thread : 'thread-234', owner, is_deleted : false,
     });
     await RepliesTableTestHelper.addReply({
-      id : 'replies-123', content : 'dicoding',  comment : 'comment-123', owner : owner, is_deleted : false,
+      id : 'replies-aaa', content : 'dicoding',  comment : 'comment-123', owner, is_deleted : false,
     });
   });
 
@@ -46,10 +47,9 @@ describe('/threads/{threadId}/comments endpoint', () => {
   });
 
   afterEach(async () => {
-    await RepliesTableTestHelper.cleanTable();
   });
 
-  describe('when POST /threads/{threadId}/comments', () => {
+  describe('when POST /threads/{threadId}/comments/{commentId}/replies/', () => {
     it('should response 201 and persisted comment', async () => {
       const server = await createServer(container);
 
@@ -73,7 +73,7 @@ describe('/threads/{threadId}/comments endpoint', () => {
       const responseReply = await server.inject({
         method: 'POST',
         url: '/threads/thread-234/comments/comment-123/replies',
-        payload: payload,
+        payload,
         headers: { 'Authorization': 'Bearer ' + responseToken.data.accessToken},
       });
       
@@ -86,72 +86,33 @@ describe('/threads/{threadId}/comments endpoint', () => {
     });
   });
 
-  // describe('when DELETE /threads/{threadId}/comments/{commentId}', () => {
-  //   it('should response 200 and deleted comment', async () => {
-  //     const server = await createServer(container);
+  describe('when DELETE /threads/{threadId}/comments/{commentId}/replies/{replyId}', () => {
+    it('should response 200 and deleted comment', async () => {
+      const server = await createServer(container);
 
-  //     // arrange dummy user
-  //     await server.inject({
-  //       method: 'POST',
-  //       url: '/users',
-  //       payload: {
-  //         username: 'dicoding',
-  //         password: 'secret',
-  //         fullname: 'Dicoding Indonesia',
-  //       },
-  //     });
-  
-  //     // gain access token
-  //     const response_before = await server.inject({
-  //       method: 'POST',
-  //       url: '/authentications',
-  //       payload: {
-  //         username: 'dicoding',
-  //         password: 'secret',
-  //       },
-  //     });
-  //     const responseToken = JSON.parse(response_before.payload);
+      // Arrange
+      const response_before = await server.inject({
+        method: 'POST',
+        url: '/authentications',
+        payload: {
+          username: 'dicoding',
+          password: 'secret',
+        },
+      });
       
-  //     // arrange dummy thread
-  //     const responseThread = await server.inject({
-  //       method: 'POST',
-  //       url: '/threads',
-  //       payload: {
-  //         title: 'dicoding',
-  //         body: 'secret',
-  //       },
-  //       headers: { 'Authorization': 'Bearer ' + responseToken.data.accessToken }
-  //     });
-  
-  //     const responseThreadJson = JSON.parse(responseThread.payload);
-  //     const threadId = responseThreadJson.data.addedThread.id;
-  
-  //     const accessToken = responseToken.data.accessToken;
-  
-  //     // arrange dummy comment
-  //     const responseComment = await server.inject({
-  //       method: 'POST',
-  //       url: `/threads/${threadId}/comments`,
-  //       payload: {
-  //         content: "this is dummy comment",
-  //       },
-  //       headers: { 'Authorization': 'Bearer ' + accessToken }
-  //     });
-  
-  //     const responseCommentJson = JSON.parse(responseComment.payload);
-  //     const commentId = responseCommentJson.data.addedComment.id;
+      const responseToken = JSON.parse(response_before.payload);
 
-  //     // Action
-  //     const response = await server.inject({
-  //       method: 'DELETE',
-  //       url: `/threads/${threadId}/comments/${commentId}`,
-  //       headers: { 'Authorization': 'Bearer ' + accessToken },
-  //     });
+      // Action
+      const response = await server.inject({
+        method: 'DELETE',
+        url: `/threads/thread-234/comments/comment-123/replies/replies-aaa`,
+        headers: { 'Authorization': 'Bearer ' + responseToken.data.accessToken },
+      });
       
-  //     // Assert
-  //     const responseJson = JSON.parse(response.payload);
-  //     expect(response.statusCode).toEqual(200);
-  //     expect(responseJson.status).toEqual('success');
-  //   });
-  // });
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+    });
+  });
 });

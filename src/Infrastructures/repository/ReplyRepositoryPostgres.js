@@ -1,8 +1,8 @@
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
-const AuthenticationError = require('../../Commons/exceptions/AuthenticationError');
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 
 const CreatedReply = require('../../Domains/replies/entities/CreatedReply');
-// const DetailedComment = require('../../Domains/replies/entities/DetailedComment');
+const DetailedReply = require('../../Domains/replies/entities/DetailedReply');
 
 const ReplyRepository = require('../../Domains/replies/ReplyRepository');
 
@@ -13,22 +13,22 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     this._idGenerator = idGenerator;
   }
 
-  // async verifyCommentOwnership(owner, comment) {
-  //   const query = {
-  //     text: 'SELECT id FROM replies WHERE id = $1',
-  //     values: [comment],
-  //   };
+  async verifyReplyOwnership(owner, reply) {
+    const query = {
+      text: 'SELECT owner FROM replies WHERE id = $1',
+      values: [reply],
+    };
 
-  //   const result = await this._pool.query(query);
+    const result = await this._pool.query(query);
 
-  //   if (result.rowCount == 0) {
-  //     throw new NotFoundError('comment tidak ditemukan');
-  //   }
+    if (result.rowCount == 0) {
+      throw new NotFoundError('reply tidak ditemukan');
+    }
 
-  //   if (result.rows[0].id == owner) {
-  //     throw new AuthenticationError('anda tidak memiliki comment ini');
-  //   }
-  // }
+    if (result.rows[0].owner != owner) {
+      throw new AuthorizationError('anda tidak memiliki reply ini');
+    }
+  }
 
   async addReply(createReply) {
     const { content, owner, comment } = createReply;
@@ -47,34 +47,34 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     return new CreatedReply({ ...result.rows[0] });
   }
 
-  // async deleteComment(selectedComment) {
-  //   const is_deleted = true;
+  async deleteReply(selectedReply) {
+    const is_deleted = true;
 
-  //   const query = {
-  //     text: `UPDATE replies
-  //           SET is_deleted = $1
-  //           WHERE id = $2;`,
-  //     values: [is_deleted, selectedComment],
-  //   };
+    const query = {
+      text: `UPDATE replies
+            SET is_deleted = $1
+            WHERE id = $2;`,
+      values: [is_deleted, selectedReply],
+    };
 
-  //   await this._pool.query(query);
-  // }
+    await this._pool.query(query);
+  }
 
-  // async getCommentByThread(thread) {
+  async getReplyByComment(comment) {
 
-  //   const query = {
-  //     text: `SELECT id, content, owner, date, is_deleted
-  //           FROM replies
-  //           where thread = $1;`,
-  //     values: [thread],
-  //   };
+    const query = {
+      text: `SELECT id, content, owner, date, is_deleted
+            FROM replies
+            where comment = $1;`,
+      values: [comment],
+    };
 
-  //   const results = await this._pool.query(query);
+    const results = await this._pool.query(query);
     
-  //   return results.rows.map(result => {
-  //     return new DetailedComment({ ...result });
-  //   })
-  // }
+    return results.rows.map(result => {
+      return new DetailedReply({ ...result });
+    })
+  }
 }
 
 module.exports = ReplyRepositoryPostgres;

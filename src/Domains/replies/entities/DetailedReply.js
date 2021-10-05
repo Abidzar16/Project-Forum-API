@@ -5,14 +5,14 @@ class DetailedReply {
     const { id, content, owner, date, is_deleted  } = payload;
  
     this.id = id;
-    this.content = this._checkDeletedComment({content, is_deleted});;
+    this.content = this._checkDeletedReply({content, is_deleted});
     this.owner = owner;
     this.date = date;
     this.is_deleted = is_deleted;
   }
  
   _verifyPayload({ id, content, owner, date, is_deleted }) {
-    if (!id || !content || !owner || !date || is_deleted == undefined) {
+    if (!id || !content || !owner || !date || typeof is_deleted === 'undefined') {
       throw new Error('DETAILED_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY');
     }
  
@@ -21,9 +21,9 @@ class DetailedReply {
     }
   }
 
-  _checkDeletedComment({ content, is_deleted }) {
+  _checkDeletedReply({ content, is_deleted }) {
     if (is_deleted) {
-      return "**komentar telah dihapus**"
+      return "**balasan telah dihapus**"
     }
     return content
   }

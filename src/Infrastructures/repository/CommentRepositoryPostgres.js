@@ -1,5 +1,5 @@
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
-const AuthenticationError = require('../../Commons/exceptions/AuthenticationError');
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 
 const CreatedComment = require('../../Domains/comments/entities/CreatedComment');
 const DetailedComment = require('../../Domains/comments/entities/DetailedComment');
@@ -26,7 +26,7 @@ class CommentRepositoryPostgres extends CommentRepository {
     }
     
     if (result.rows[0].owner != owner) {
-      throw new AuthenticationError('anda tidak memiliki comment ini');
+      throw new AuthorizationError('anda tidak memiliki comment ini');
     }
   }
 
@@ -50,13 +50,12 @@ class CommentRepositoryPostgres extends CommentRepository {
   async addComment(createComment) {
     const { content, owner, thread } = createComment;
     const id = `comment-${this._idGenerator()}`;
-    const is_deleted = false; // defauit
 
     const query = {
       text: `INSERT INTO comments(id, content, owner, thread, is_deleted) 
-            VALUES ($1, $2, $3, $4, $5) 
+            VALUES ($1, $2, $3, $4, false) 
             RETURNING id, content, owner`,
-      values: [id, content, owner, thread, is_deleted],
+      values: [id, content, owner, thread],
     };
 
     const result = await this._pool.query(query);
@@ -65,13 +64,11 @@ class CommentRepositoryPostgres extends CommentRepository {
   }
 
   async deleteComment(selectedComment) {
-    const is_deleted = true;
-
     const query = {
       text: `UPDATE comments
-            SET is_deleted = $1
-            WHERE id = $2;`,
-      values: [is_deleted, selectedComment],
+            SET is_deleted = true
+            WHERE id = $1;`,
+      values: [selectedComment],
     };
 
     await this._pool.query(query);

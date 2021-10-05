@@ -10,7 +10,7 @@ const pool = require('../../database/postgres/pool');
 const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
 
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
-const AuthenticationError = require('../../../Commons/exceptions/AuthenticationError');
+const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
  
 describe('CommentRepositoryPostgres', () => {
   beforeAll(async () => {
@@ -44,7 +44,7 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
  
       // Action & Assert
-      await expect(commentRepositoryPostgres.verifyCommentOwnership('user-123','comment-abc')).rejects.toThrowError(AuthenticationError);
+      await expect(commentRepositoryPostgres.verifyCommentOwnership('user-123','comment-abc')).rejects.toThrowError(AuthorizationError);
     });
  
     it('should not throw AuthenticationError NotFoundError when comment found and owned', async () => {
@@ -53,7 +53,7 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
  
       // Action & Assert
-      await expect(commentRepositoryPostgres.verifyCommentOwnership('user-234','comment-345')).resolves;
+      await expect(commentRepositoryPostgres.verifyCommentOwnership('user-234','comment-345')).resolves.not.toThrowError(AuthorizationError);
     });
   });
 
