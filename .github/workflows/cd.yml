@@ -20,6 +20,8 @@ jobs:
           procfile: "web: npm install && npm run migrate up && npm start"
         env:
           CI: true
+          HOST: ${{ secrets.HOST }}
+          PORT: ${{ secrets.PORT }}
           PGHOST: ${{ secrets.PGHOST }}
           PGUSER: ${{ secrets.PGUSER }}
           PGDATABASE: ${{ secrets.PGDATABASE }}
