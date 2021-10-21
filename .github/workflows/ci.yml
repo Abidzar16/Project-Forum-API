@@ -61,7 +61,6 @@ jobs:
           npm install
           npm run migrate:test:prod up
           npm run test
-
         env:
           CI: true
           PGHOST_TEST: postgres
@@ -69,10 +68,25 @@ jobs:
           PGDATABASE_TEST: ${{ secrets.PGDATABASE_TEST }}
           PGPASSWORD_TEST: ${{ secrets.PGPASSWORD_TEST }}
           PGPORT_TEST: ${{ secrets.PGPORT_TEST }}
-          PGHOST: ${{ secrets.PGHOST_TEST }}
+          ACCESS_TOKEN_KEY: ${{ secrets.ACCESS_TOKEN_KEY }}
+          REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }}
+          ACCCESS_TOKEN_AGE: ${{ secrets.ACCCESS_TOKEN_AGE }}
+
+      - name: Create production DB and Run the application
+          # Runs a script that creates a PostgreSQL table, populates
+          # the table with data, and then retrieves the data.
+        run: |
+          psql -h postgres -U postgres_user -W ${{ secrets.PGPASSWORD }} -c 'CREATE ${{ secrets.PGDATABASE }};'
+          npm install
+          npm run migrate up
+          npm start
+        env:
+          CI: true
+          PGHOST: postgres
           PGUSER: ${{ secrets.PGUSER_TEST }}
-          PGDATABASE: ${{ secrets.PGDATABASE_TEST }}
-          PGPASSWORD: ${{ secrets.PGPASSWORD_TEST }}
+          PGDATABASE: ${{ secrets.PGDATABASE }}
+          PGPASSWORD: ${{ secrets.PGPASSWORD }}
           PGPORT: ${{ secrets.PGPORT_TEST }}
           ACCESS_TOKEN_KEY: ${{ secrets.ACCESS_TOKEN_KEY }}
-          REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }} 
+          REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }}
+          ACCCESS_TOKEN_AGE: ${{ secrets.ACCCESS_TOKEN_AGE }} 
