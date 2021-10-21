@@ -48,7 +48,7 @@ class GetThreadUseCase {
     var rawComments = [await this._commentRepository.getCommentByThread(threadId)];
     const completeComment = Promise.all(rawComments.flat().map(async (comment) => {
       comment['username'] = await this._userRepository.getUsernameById(comment['owner']);
-
+      
       const count = await this._likeRepository.getLikeByComment(comment['id']);
       comment['likeCount'] = parseInt(count, 10);
       

@@ -101,6 +101,7 @@ describe('GetDetailedUseCase', () => {
         threadRepository: mockThreadRepository,
         commentRepository: mockCommentRepository,
         replyRepository: mockReplyRepository,
+        likeRepository: mockLikeRepository,
     });
 
     // Act
