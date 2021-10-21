@@ -1,0 +1,66 @@
+name: Continous Integration & Deployment
+
+on: 
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # Label of the container job
+  container-job:
+    # Containers must run in Linux based operating systems
+    runs-on: ubuntu-latest
+    # Docker Hub image that `container-job` executes in
+    container: ${{ matrix.node-version }}
+
+    # Service containers to run with `container-job`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide the password for postgres
+        env:
+          POSTGRES_USER: ${{ secrets.PGUSER_TEST }}
+          POSTGRES_DB: ${{ secrets.PGDATABASE_TEST }}
+          POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD_TEST }}
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+        matrix:
+          node-version: [14.x]
+          # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: npm install migrate and test
+      run: |
+        npm install
+        npm run migrate:test up
+        npm run test
+      env:
+        CI: true
+        PGHOST_TEST: postgres
+        PGUSER_TEST: ${{ secrets.PGUSER_TEST }}
+        PGDATABASE_TEST: ${{ secrets.PGDATABASE_TEST }}
+        PGPASSWORD_TEST: ${{ secrets.PGPASSWORD_TEST }}
+        PGPORT_TEST: ${{ secrets.PGPORT_TEST }}
+        PGHOST: ${{ secrets.PGHOST_TEST }}
+        PGUSER: ${{ secrets.PGUSER_TEST }}
+        PGDATABASE: ${{ secrets.PGDATABASE_TEST }}
+        PGPASSWORD: ${{ secrets.PGPASSWORD_TEST }}
+        PGPORT: ${{ secrets.PGPORT_TEST }}
+        ACCESS_TOKEN_KEY: ${{ secrets.ACCESS_TOKEN_KEY }}
+        REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }}
