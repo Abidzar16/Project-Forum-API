@@ -76,7 +76,7 @@ jobs:
           # Runs a script that creates a PostgreSQL table, populates
           # the table with data, and then retrieves the data.
         run: |
-          psql -h postgres -U ${{ secrets.PGUSER }} -W ${{ secrets.PGPASSWORD }} -c 'CREATE ${{ secrets.PGDATABASE }};'
+          psql -h postgres -U ${{ secrets.PGUSER }} -W ${{ secrets.PGPASSWORD }} -c 'CREATE DATABASE ${{ secrets.PGDATABASE }};'
           npm install
           npm run migrate up
           npm start
