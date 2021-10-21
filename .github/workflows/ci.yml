@@ -46,7 +46,7 @@ jobs:
         # the table with data, and then retrieves the data.
         run: |
           npm install
-          npm run migrate:test up
+          npm run migrate:test:prod up
           npm run test
         # Environment variables used by the `client.js` script to create a new PostgreSQL table.
         env:
