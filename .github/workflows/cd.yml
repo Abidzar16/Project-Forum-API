@@ -18,6 +18,12 @@ jobs:
           heroku_app_name: "forum-api-abid" #Must be unique in Heroku
           heroku_email: "abidzarisprivate@gmail.com"
           procfile: "web: npm install && npm run migrate up && npm start"
+          script: |
+            cd ~/project-forum-api
+            git pull origin main
+            npm install
+            npm run migrate up
+            pm2 restart project-forum-api
         env:
           CI: true
           PGHOST: ${{ secrets.PGHOST }}
