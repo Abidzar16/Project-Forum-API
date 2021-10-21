@@ -1,7 +1,7 @@
 {
   "user": "developer",
   "password": "supersecretpassword",
-  "host": "localhost",
+  "host": "postgres",
   "port": 5432,
   "database": "forumapi_test"
 }
