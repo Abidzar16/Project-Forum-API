@@ -34,10 +34,10 @@ describe('ReplyRepositoryPostgres', () => {
 
   describe('verifyReplyOwnership function', () => {
     it('should throw NotFoundError when thread not found', async () => {
-      const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
       
       // Action & Assert
-      await expect(commentRepositoryPostgres.verifyReplyOwnership('user-234','reply-123')).rejects.toThrowError(NotFoundError);
+      await expect(replyRepositoryPostgres.verifyReplyOwnership('user-234','reply-123')).rejects.toThrowError(NotFoundError);
     });
 
     it('should throw AuthorizationError when reply found but not owned', async () => {
@@ -45,10 +45,10 @@ describe('ReplyRepositoryPostgres', () => {
       await RepliesTableTestHelper.addReply({
         id: 'reply-123', content: 'dicoding', comment: 'comment-345', owner: 'user-123', is_deleted: false,
       });
-      const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
  
       // Action & Assert
-      await expect(commentRepositoryPostgres.verifyReplyOwnership('user-234','reply-123')).rejects.toThrowError(AuthorizationError);
+      await expect(replyRepositoryPostgres.verifyReplyOwnership('user-234','reply-123')).rejects.toThrowError(AuthorizationError);
     });
  
     it('should not throw AuthenticationError when reply is found and owned', async () => {
@@ -56,15 +56,15 @@ describe('ReplyRepositoryPostgres', () => {
       await RepliesTableTestHelper.addReply({
         id: 'reply-123', content: 'dicoding', comment: 'comment-345', owner: 'user-123', is_deleted: false,
       });
-      const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, {});
  
       // Action & Assert
-      await expect(commentRepositoryPostgres.verifyReplyOwnership('user-123','reply-123')).resolves.not.toThrowError(AuthorizationError);
+      await expect(replyRepositoryPostgres.verifyReplyOwnership('user-123','reply-123')).resolves.not.toThrowError(AuthorizationError);
     });
   });
  
   describe('addReply function', () => {
-    it('should persist create thread', async () => {
+    it('should persist create reply', async () => {
       // Arrange
       const createReply = new CreateReply({
         content: 'dicoding',
@@ -131,10 +131,10 @@ describe('ReplyRepositoryPostgres', () => {
         id: 'reply-123', content: 'dicoding', comment: 'comment-345', owner: 'user-123', is_deleted: false,
       });
       const fakeIdGenerator = () => '780'; // stub!
-      const commentRepositoryPostgres = new ReplyRepositoryPostgres(pool, fakeIdGenerator);
+      const replyRepositoryPostgres = new ReplyRepositoryPostgres(pool, fakeIdGenerator);
       
       // Action
-      const detailedComments = await commentRepositoryPostgres.getReplyByComment('comment-345');
+      const detailedComments = await replyRepositoryPostgres.getReplyByComment('comment-345');
  
       // Assert
       expect(detailedComments).toHaveLength(1);

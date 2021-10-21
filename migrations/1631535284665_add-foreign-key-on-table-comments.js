@@ -7,4 +7,3 @@ exports.down = (pgm) => {
   pgm.dropConstraint('comments', 'fk_comments.owner_users.id', 'IF EXISTS ON DELETE CASCADE');
   pgm.dropConstraint('comments', 'fk_comments.thread_threads.id', 'IF EXISTS ON DELETE CASCADE');
 };
-

@@ -4,6 +4,7 @@ const UserRepository = require('../../../Domains/users/UserRepository');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
+const LikeRepository = require('../../../Domains/likes/LikeRepository');
 
 const GetDetailedUseCase = require('../GetDetailedUseCase');
 
@@ -73,12 +74,14 @@ describe('GetDetailedUseCase', () => {
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
     const mockReplyRepository = new ReplyRepository();
+    const mockLikeRepository = new LikeRepository();
 
     mockUserRepository.getUsernameById = jest.fn()
       .mockImplementation(() => Promise.resolve());
 
     mockThreadRepository.verifyAvailableThread = jest.fn()
       .mockImplementation(() => Promise.resolve());
+      
     mockThreadRepository.getThread = jest.fn()
       .mockImplementation(() => Promise.resolve(expectedDetailedThread));
 
@@ -87,6 +90,9 @@ describe('GetDetailedUseCase', () => {
     
     mockReplyRepository.getReplyByComment = jest.fn()
       .mockImplementation(() => Promise.resolve(expectedDetailedReply));
+    
+    mockLikeRepository.getLikeByComment = jest.fn()
+      .mockImplementation(() => Promise.resolve(0));
 
     console.error = jest.fn()
 
@@ -108,6 +114,8 @@ describe('GetDetailedUseCase', () => {
     expect(mockCommentRepository.getCommentByThread)
       .toHaveBeenCalledWith(useCasePayload.thread);
     expect(mockReplyRepository.getReplyByComment)
+      .toHaveBeenCalledWith("comment-123");
+    expect(mockLikeRepository.getLikeByComment)
       .toHaveBeenCalledWith("comment-123");
   });
 });

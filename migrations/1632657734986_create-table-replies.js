@@ -15,6 +15,7 @@ exports.up = (pgm) => {
     is_deleted: {
       type: 'BOOLEAN',
       notNull: true,
+      default: false,
     },
     comment: {
       type: 'VARCHAR(50)',
