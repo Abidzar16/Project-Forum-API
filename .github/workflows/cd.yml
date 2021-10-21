@@ -7,38 +7,11 @@ on:
 
 jobs:
   # label of the container job
-  postgres-job:
+  postgres-job-create-production-database:
     # containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `postgres-job` executes in
     container: node:latest
-
-    # service containers to run with `postgres-job`
-    services:
-      # label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres:latest
-        # service environment variables
-        # `POSTGRES_HOST` is `postgres`
-        env:
-          # optional (defaults to `postgres`)
-          POSTGRES_DB: ${{ secrets.PGDATABASE_TEST }}
-          # required
-          POSTGRES_PASSWORD: ${{ secrets.PGPASSWORD_TEST }}
-          # optional (defaults to `5432`)
-          POSTGRES_PORT: 5432
-          # optional (defaults to `postgres`)
-          POSTGRES_USER: ${{ secrets.PGUSER_TEST }}
-        ports:
-          # maps tcp port 5432 on service container to the host
-          - 5432:5432
-        # set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - name: Install PostgreSQL client
@@ -59,8 +32,6 @@ jobs:
           # the table with data, and then retrieves the data.
         run: |
           psql -h postgres -d ${{ secrets.PGDATABASE_TEST }} -U ${{ secrets.PGUSER }} -W ${{ secrets.PGPASSWORD }} -c 'CREATE DATABASE ${{ secrets.PGDATABASE }};'
-          npm install
-          npm run migrate up
         env:
           CI: true
           PGHOST: postgres
