@@ -54,7 +54,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Migrate and Test
+      - name: Complete Test
         # Runs a script that creates a PostgreSQL table, populates
         # the table with data, and then retrieves the data.
         run: |
@@ -71,22 +71,3 @@ jobs:
           ACCESS_TOKEN_KEY: ${{ secrets.ACCESS_TOKEN_KEY }}
           REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }}
           ACCCESS_TOKEN_AGE: ${{ secrets.ACCCESS_TOKEN_AGE }}
-
-      - name: Create production DB
-          # Runs a script that creates a PostgreSQL table, populates
-          # the table with data, and then retrieves the data.
-        run: |
-          psql -h postgres -d ${{ secrets.PGDATABASE_TEST }} -U ${{ secrets.PGUSER }} -W ${{ secrets.PGPASSWORD }} -c 'CREATE DATABASE ${{ secrets.PGDATABASE }};'
-          npm install
-          npm run migrate up
-        env:
-          CI: true
-          PGHOST: postgres
-          PGDATABASE_TEST: ${{ secrets.PGDATABASE_TEST }}
-          PGUSER: ${{ secrets.PGUSER }}
-          PGDATABASE: ${{ secrets.PGDATABASE }}
-          PGPASSWORD: ${{ secrets.PGPASSWORD }}
-          PGPORT: ${{ secrets.PGPORT_TEST }}
-          ACCESS_TOKEN_KEY: ${{ secrets.ACCESS_TOKEN_KEY }}
-          REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }}
-          ACCCESS_TOKEN_AGE: ${{ secrets.ACCCESS_TOKEN_AGE }} 
