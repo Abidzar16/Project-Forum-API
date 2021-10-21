@@ -51,7 +51,7 @@ jobs:
         # Environment variables used by the `client.js` script to create a new PostgreSQL table.
         env:
           CI: true
-          PGHOST_TEST: postgres
+          PGHOST_TEST: localhost
           PGUSER_TEST: ${{ secrets.PGUSER_TEST }}
           PGDATABASE_TEST: ${{ secrets.PGDATABASE_TEST }}
           PGPASSWORD_TEST: ${{ secrets.PGPASSWORD_TEST }}
