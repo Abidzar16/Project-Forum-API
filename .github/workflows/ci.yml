@@ -1,4 +1,4 @@
-name: Continous Integration & Deployment
+name: Continous Integration
 
 on: 
   pull_request:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   # label of the container job
-  postgres-job-and-testing:
+  postgres-job:
     # containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `postgres-job` executes in
@@ -54,14 +54,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Migrate and Test
+      - name: Complete Test
         # Runs a script that creates a PostgreSQL table, populates
         # the table with data, and then retrieves the data.
         run: |
-          npm install
           npm run migrate:test:prod up
           npm run test
-        # Environment variables used by the `client.js` script to create a new PostgreSQL table.
         env:
           CI: true
           PGHOST_TEST: postgres
@@ -69,10 +67,6 @@ jobs:
           PGDATABASE_TEST: ${{ secrets.PGDATABASE_TEST }}
           PGPASSWORD_TEST: ${{ secrets.PGPASSWORD_TEST }}
           PGPORT_TEST: ${{ secrets.PGPORT_TEST }}
-          PGHOST: ${{ secrets.PGHOST_TEST }}
-          PGUSER: ${{ secrets.PGUSER_TEST }}
-          PGDATABASE: ${{ secrets.PGDATABASE_TEST }}
-          PGPASSWORD: ${{ secrets.PGPASSWORD_TEST }}
-          PGPORT: ${{ secrets.PGPORT_TEST }}
           ACCESS_TOKEN_KEY: ${{ secrets.ACCESS_TOKEN_KEY }}
-          REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }} 
+          REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }}
+          ACCCESS_TOKEN_AGE: ${{ secrets.ACCCESS_TOKEN_AGE }}

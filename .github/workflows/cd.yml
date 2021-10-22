@@ -1,0 +1,32 @@
+name: Continous Development
+
+on: 
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # label of the container job
+
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "forum-api-abid" #Must be unique in Heroku
+          heroku_email: "abidzarisprivate@gmail.com"
+          procfile: "web: cd ~/forum-api-abid && git pull origin main && npm install && npm run migrate up && pm2 restart forum-api-abid"
+        env:
+          CI: true
+          HOST: ${{ secrets.HOST }}
+          PORT: ${{ secrets.PORT }}
+          PGHOST: ${{ secrets.PGHOST }}
+          PGUSER: ${{ secrets.PGUSER }}
+          PGDATABASE: ${{ secrets.PGDATABASE }}
+          PGPASSWORD: ${{ secrets.PGPASSWORD }}
+          PGPORT: ${{ secrets.PGPORT }}
+          ACCESS_TOKEN_KEY: ${{ secrets.ACCESS_TOKEN_KEY }}
+          REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }}
+          ACCCESS_TOKEN_AGE: ${{ secrets.ACCCESS_TOKEN_AGE }}
