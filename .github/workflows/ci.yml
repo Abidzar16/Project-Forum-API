@@ -58,7 +58,6 @@ jobs:
         # Runs a script that creates a PostgreSQL table, populates
         # the table with data, and then retrieves the data.
         run: |
-          npm install
           npm run migrate:test:prod up
           npm run test
         env:

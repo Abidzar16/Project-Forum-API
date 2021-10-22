@@ -17,7 +17,7 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "forum-api-abid" #Must be unique in Heroku
           heroku_email: "abidzarisprivate@gmail.com"
-          procfile: "web: npm install && npm run migrate up && npm start"
+          procfile: "web: git pull origin master && npm install && npm run migrate up && npm start"
         env:
           CI: true
           HOST: ${{ secrets.HOST }}
