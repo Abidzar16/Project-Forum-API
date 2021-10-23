@@ -17,13 +17,16 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "setupFiles": ["core-js"],
+  "setupFiles": [
+    "core-js"
+  ],
   "dependencies": {
     "@hapi/hapi": "^20.1.5",
     "@hapi/jwt": "^2.0.1",
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "eslint-plugin-markdown": "^2.2.1",
+    "hapi-rate-limit": "^5.0.1",
     "instances-container": "^2.0.3",
     "lodash": "^4.17.21",
     "nanoid": "^3.1.23",

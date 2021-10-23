@@ -1,5 +1,6 @@
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
+const hapi_rate_limit = require('hapi-rate-limit')
 const ClientError = require('../../Commons/exceptions/ClientError');
 const DomainErrorTranslator = require('../../Commons/exceptions/DomainErrorTranslator');
 
@@ -20,6 +21,15 @@ const createServer = async (container) => {
     {
       plugin: Jwt,
     },
+    {
+      plugin: hapi_rate_limit,
+      options: {
+        pathLimit: 90, // 90 requests
+        pathCache: {
+          expiresIn: 60000, // 1 minute
+        }
+      }
+    }
   ]);
 
     // mendefinisikan strategy autentikasi jwt
@@ -53,15 +63,15 @@ const createServer = async (container) => {
       options: { container },
     },
     {
-      plugin: threads,
-      options: { container },
-    },
-    {
       plugin: replies,
       options: { container },
     },
     {
       plugin: likes,
+      options: { container },
+    },
+    {
+      plugin: threads,
       options: { container },
     },
   ]);
