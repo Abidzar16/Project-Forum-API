@@ -54,7 +54,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Complete Test
+      - name: Databasbe Migration and Application Test
         # Runs a script that creates a PostgreSQL table, populates
         # the table with data, and then retrieves the data.
         run: |
