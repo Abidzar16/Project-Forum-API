@@ -1,6 +1,6 @@
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
-const hapi_rate_limit = require('hapi-rate-limit')
+const hapi_rate_limit = require('hapi-rate-limit');
 const ClientError = require('../../Commons/exceptions/ClientError');
 const DomainErrorTranslator = require('../../Commons/exceptions/DomainErrorTranslator');
 
@@ -24,12 +24,14 @@ const createServer = async (container) => {
     {
       plugin: hapi_rate_limit,
       options: {
-        pathLimit: 90, // 90 requests
+        userLimit: false,
+        addressOnly: true,
+        pathLimit: 90,
         pathCache: {
-          expiresIn: 60000, // 1 minute
+          expiresIn: 60000,
         }
       }
-    }
+    },
   ]);
 
     // mendefinisikan strategy autentikasi jwt
@@ -85,7 +87,7 @@ const createServer = async (container) => {
       
       // bila response tersebut error, tangani sesuai kebutuhan
       const translatedError = DomainErrorTranslator.translate(response);
-      console.log(response);
+      // console.log(response);
       // penanganan client error secara internal.
       if (translatedError instanceof ClientError) {
         const newResponse = h.response({
