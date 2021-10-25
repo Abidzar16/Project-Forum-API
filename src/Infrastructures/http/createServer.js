@@ -25,16 +25,16 @@ const createServer = async (container) => {
   ]);
 
   // diaktifkan hanya saat produksi
-  await server.register([
-    {
-      plugin: Hapi_rate_limit,
-      options: {
-        userLimit: false,
-        pathLimit: 90, // 90 requests per minutes untuk setiap path
-        addressOnly: true,
-      },
-    },
-  ]);
+  // await server.register([
+  //   {
+  //     plugin: Hapi_rate_limit,
+  //     options: {
+  //       userLimit: false,
+  //       pathLimit: 90, // 90 requests per minutes untuk setiap path
+  //       addressOnly: true,
+  //     },
+  //   },
+  // ]);
 
     // mendefinisikan strategy autentikasi jwt
   server.auth.strategy('forumapi_jwt', 'jwt', {
