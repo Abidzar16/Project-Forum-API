@@ -10,6 +10,8 @@ const comments = require('../../Interfaces/http/api/comments');
 const replies = require('../../Interfaces/http/api/replies');
 const likes = require('../../Interfaces/http/api/likes');
 
+const rateLimitMemory = require('../../Plugins/rateLimitMemory');
+
 const createServer = async (container) => {
   const server = Hapi.server({
     host: process.env.HOST,
@@ -20,8 +22,9 @@ const createServer = async (container) => {
     {
       plugin: Jwt,
     },
-    
   ]);
+
+  await server.register(rateLimitMemory);
 
     // mendefinisikan strategy autentikasi jwt
   server.auth.strategy('forumapi_jwt', 'jwt', {
