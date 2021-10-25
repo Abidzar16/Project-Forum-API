@@ -40,7 +40,7 @@ http {
         server app-b.herokuapp.com:443;
     }
 
-    limit_req_zone $binary_remote_addr zone=one:10m rate=90r/m;
+    limit_req_zone $binary_remote_addr zone=one:10m burst=20 rate=1r/s;
 
     server {
         listen <%= ENV["PORT"] %>;
@@ -64,6 +64,8 @@ http {
             proxy_set_header x-forwarded-host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host app-b.herokuapp.com;
+
+            limit_req zone=one;
         }
     }
 }
