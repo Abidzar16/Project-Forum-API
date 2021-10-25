@@ -29,12 +29,9 @@ const createServer = async (container) => {
     {
       plugin: Hapi_rate_limit,
       options: {
-        userLimit: 90,
-        userCache: {
-          expiresIn: 60000,
-        },
+        userLimit: false,
+        pathLimit: 90, // 90 requests per minutes untuk setiap path
         addressOnly: true,
-        pathLimit: false,
       },
     },
   ]);
