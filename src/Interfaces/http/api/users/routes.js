@@ -1,5 +1,3 @@
-require('hapi-rate-limit');
-
 const routes = (handler) => ([
   {
     method: 'POST',
