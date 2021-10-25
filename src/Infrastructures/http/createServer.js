@@ -1,6 +1,6 @@
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
-const hapi_rate_limit = require('hapi-rate-limit');
+// const Hapi_rate_limit = require('hapi-rate-limit'); // diaktifkan hanya saat produksi
 const ClientError = require('../../Commons/exceptions/ClientError');
 const DomainErrorTranslator = require('../../Commons/exceptions/DomainErrorTranslator');
 
@@ -21,18 +21,23 @@ const createServer = async (container) => {
     {
       plugin: Jwt,
     },
-    {
-      plugin: hapi_rate_limit,
-      options: {
-        userLimit: false,
-        addressOnly: true,
-        pathLimit: 90,
-        pathCache: {
-          expiresIn: 60000,
-        }
-      }
-    },
+    
   ]);
+
+  // diaktifkan hanya saat produksi
+  // await server.register([
+  //   {
+  //     plugin: Hapi_rate_limit,
+  //     options: {
+  //       userLimit: 90,
+  //       userCache: {
+  //         expiresIn: 60000,
+  //       },
+  //       addressOnly: true,
+  //       pathLimit: false,
+  //     },
+  //   },
+  // ]);
 
     // mendefinisikan strategy autentikasi jwt
   server.auth.strategy('forumapi_jwt', 'jwt', {
@@ -87,7 +92,6 @@ const createServer = async (container) => {
       
       // bila response tersebut error, tangani sesuai kebutuhan
       const translatedError = DomainErrorTranslator.translate(response);
-      // console.log(response);
       // penanganan client error secara internal.
       if (translatedError instanceof ClientError) {
         const newResponse = h.response({
