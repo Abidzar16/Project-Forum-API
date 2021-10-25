@@ -53,9 +53,9 @@ http {
             proxy_set_header x-forwarded-host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host app-a.herokuapp.com;
+
+            limit_req zone=one;
         }
-        
-        limit_req zone=one;
 
         location /other {
             set $upstream upstream_app_b;

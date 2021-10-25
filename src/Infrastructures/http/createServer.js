@@ -1,6 +1,6 @@
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
-const Hapi_rate_limit = require('hapi-rate-limit'); // diaktifkan hanya saat produksi
+// const Hapi_rate_limit = require('hapi-rate-limit'); // diaktifkan hanya saat produksi
 const ClientError = require('../../Commons/exceptions/ClientError');
 const DomainErrorTranslator = require('../../Commons/exceptions/DomainErrorTranslator');
 
